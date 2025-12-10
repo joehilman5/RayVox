@@ -24,7 +24,7 @@ public class RayVox implements IRayVox {
 
     @Override
     public void init() throws Exception {
-        //renderer.init();
+        renderer.init();
 
         float[] vertices = {
                 -0.5f, 0.5f, 0f,
