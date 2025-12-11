@@ -1,15 +1,15 @@
 package main;
 
-import engine.Camera;
-import engine.ObjectLoader;
-import engine.RenderManager;
-import engine.WindowManager;
+import engine.*;
 import entities.Entity;
 import entities.Model;
 import entities.Texture;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RayVox implements IRayVox {
 
@@ -19,15 +19,14 @@ public class RayVox implements IRayVox {
     private final ObjectLoader loader;
     private final WindowManager window;
 
-    private Model model;
-    private Entity entity;
     private Camera camera;
     private Vector3f cameraInc;
 
     private Model bunnyModel;
     private Entity bunny;
+    private Light light;
 
-    private Entity entity2;
+    private List<Entity> entityList = new ArrayList<>();
 
     public RayVox() {
         renderer = new RenderManager();
@@ -41,64 +40,7 @@ public class RayVox implements IRayVox {
     public void init() throws Exception {
         renderer.init();
 
-        float[] vertices = new float[] {
-                -0.5f, 0.5f, 0.5f,
-                -0.5f, -0.5f, 0.5f,
-                0.5f, -0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                -0.5f, 0.5f, -0.5f,
-                0.5f, 0.5f, -0.5f,
-                -0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                -0.5f, 0.5f, -0.5f,
-                0.5f, 0.5f, -0.5f,
-                -0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.5f, 0.5f, 0.5f,
-                0.5f, -0.5f, 0.5f,
-                -0.5f, 0.5f, 0.5f,
-                -0.5f, -0.5f, 0.5f,
-                -0.5f, -0.5f, -0.5f,
-                0.5f, -0.5f, -0.5f,
-                -0.5f, -0.5f, 0.5f,
-                0.5f, -0.5f, 0.5f,
-        };
-        float[] textureCoords = new float[]{
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.5f, 0.0f,
-                0.0f, 0.0f,
-                0.5f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.0f, 1.0f,
-                0.5f, 1.0f,
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.0f,
-                0.5f, 0.5f,
-                0.5f, 0.0f,
-                1.0f, 0.0f,
-                0.5f, 0.5f,
-                1.0f, 0.5f,
-        };
-        int[] indices = new int[]{
-                0, 1, 3, 3, 1, 2,
-                8, 10, 11, 9, 8, 11,
-                12, 13, 7, 5, 12, 7,
-                14, 15, 6, 4, 14, 6,
-                16, 18, 19, 17, 16, 19,
-                4, 6, 7, 5, 4, 7,
-        };
-
-        model = loader.loadToVao(vertices, textureCoords, indices);
-        model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
-        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1f);
-        entity2 = new Entity(model, new Vector3f(1f, 0, -5), new Vector3f(0, 0, 0), 1f);
-
+        light = new Light(new Vector3f(0, 2, 2), new Vector3f(1, 1, 1));
         bunnyModel = loader.loadObjModel("/models/bunny.obj");
         bunnyModel.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
         bunny = new Entity(bunnyModel, new Vector3f(0, 0, -10), new Vector3f(0, 0, 0), 1f);
@@ -146,9 +88,11 @@ public class RayVox implements IRayVox {
         }
 
         window.setClearColor(0, 1, 1, 1);
-        renderer.render(entity, camera);
-        renderer.render(entity2, camera);
-        renderer.render(bunny, camera);
+        renderer.render(bunny, camera, light);
+
+//        for(Entity newEntity: entityList) {
+//            renderer.render(newEntity, camera);
+//        }
     }
 
     @Override
