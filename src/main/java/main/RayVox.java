@@ -3,11 +3,11 @@ package main;
 import engine.ObjectLoader;
 import engine.RenderManager;
 import engine.WindowManager;
+import entities.Entity;
 import entities.Model;
 import entities.Texture;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
-
-import javax.swing.*;
 
 public class RayVox implements IRayVox {
 
@@ -16,6 +16,7 @@ public class RayVox implements IRayVox {
     private final WindowManager window;
 
     private Model model;
+    private Entity entity;
 
     public RayVox() {
         renderer = new RenderManager();
@@ -48,6 +49,7 @@ public class RayVox implements IRayVox {
 
         model = loader.loadToVao(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
+        entity = new Entity(model, new Vector3f(1, 0, 0), new Vector3f(0, 0, 0), 1f);
 
     }
 
@@ -58,7 +60,10 @@ public class RayVox implements IRayVox {
 
     @Override
     public void update() {
-
+        if(entity.getPosition().x < -1.5f) {
+            entity.getPosition().x = 1.5f;
+        }
+        entity.getPosition().x -= 0.01f;
     }
 
     @Override
@@ -69,7 +74,7 @@ public class RayVox implements IRayVox {
         }
 
         window.setClearColor(1, 0, 0, 1);
-        renderer.render(model);
+        renderer.render(entity);
     }
 
     @Override

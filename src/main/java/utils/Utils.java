@@ -1,5 +1,7 @@
 package utils;
 
+import entities.Entity;
+import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.io.InputStream;
@@ -33,4 +35,14 @@ public class Utils {
         return result;
     }
 
+    public static Matrix4f createTransform(Entity entity) {
+        Matrix4f matrix = new Matrix4f();
+        matrix.identity();
+        matrix.translate(entity.getPosition())
+                .rotateX((float) Math.toRadians(entity.getRotation().x))
+                .rotateY((float) Math.toRadians(entity.getRotation().y))
+                .rotateZ((float) Math.toRadians(entity.getRotation().z))
+                .scale(entity.getScale());
+        return matrix;
+    }
 }

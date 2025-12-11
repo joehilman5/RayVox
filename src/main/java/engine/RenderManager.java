@@ -1,5 +1,6 @@
 package engine;
 
+import entities.Entity;
 import entities.Model;
 import main.Launcher;
 import org.lwjgl.opengl.GL11;
@@ -23,12 +24,15 @@ public class RenderManager {
         shader.createFragmentShader(Utils.loadResource("/shaders/fragment.fs"));
         shader.link();
         shader.createUniform("textureSampler");
+        shader.createUniform("transformationMatrix");
     }
 
-    public void render(Model model) {
+    public void render(Entity entity) {
+        Model model = entity.getModel();
         clear();
         shader.bind();
         shader.setUniform("textureSampler", 0);
+        shader.setUniform("transformationMatrix", Utils.createTransform(entity));
         GL30.glBindVertexArray(model.getVaoId());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
