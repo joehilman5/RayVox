@@ -20,10 +20,12 @@ public class RayVox implements IRayVox {
     private final WindowManager window;
 
     private Model model;
-    private Model model2;
     private Entity entity;
     private Camera camera;
     private Vector3f cameraInc;
+
+    private Model bunnyModel;
+    private Entity bunny;
 
     private Entity entity2;
 
@@ -93,13 +95,13 @@ public class RayVox implements IRayVox {
         };
 
         model = loader.loadToVao(vertices, textureCoords, indices);
-        model2 = loader.loadToVao(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
-        model2.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
         entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1f);
-        entity2 = new Entity(model2, new Vector3f(5, 0, -5), new Vector3f(0, 0, 0), 1f);
-        System.out.println(entity.getModel().getVaoId());
-        System.out.println(entity2.getModel().getVaoId());
+        entity2 = new Entity(model, new Vector3f(1f, 0, -5), new Vector3f(0, 0, 0), 1f);
+
+        bunnyModel = loader.loadObjModel("/models/bunny.obj");
+        bunnyModel.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
+        bunny = new Entity(bunnyModel, new Vector3f(0, 0, -10), new Vector3f(0, 0, 0), 1f);
     }
 
     @Override
@@ -131,7 +133,7 @@ public class RayVox implements IRayVox {
     public void update() {
         camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
 
-        entity.incRotation(0.5f, 0.5f, 0);
+        bunny.incRotation(0, 0.5f, 0);
     }
 
     @Override
@@ -146,6 +148,7 @@ public class RayVox implements IRayVox {
         window.setClearColor(0, 1, 1, 1);
         renderer.render(entity, camera);
         renderer.render(entity2, camera);
+        renderer.render(bunny, camera);
     }
 
     @Override
