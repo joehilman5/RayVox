@@ -4,6 +4,7 @@ import engine.ObjectLoader;
 import engine.RenderManager;
 import engine.WindowManager;
 import entities.Model;
+import entities.Texture;
 import org.lwjgl.opengl.GL11;
 
 import javax.swing.*;
@@ -33,12 +34,20 @@ public class RayVox implements IRayVox {
                 0.5f, 0.5f, 0f,
         };
 
+        float[] textureCoords = {
+                0, 0,
+                0, 1,
+                1, 1,
+                1, 0
+        };
+
         int[] indices = {
                 0, 1, 3,
                 3, 1, 2
         };
 
-        model = loader.loadToVao(vertices, indices);
+        model = loader.loadToVao(vertices, textureCoords, indices);
+        model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
 
     }
 
