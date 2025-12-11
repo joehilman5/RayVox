@@ -31,7 +31,7 @@ public class RenderManager {
 
     public void render(Entity entity, Camera camera) {
         Model model = entity.getModel();
-        clear();
+        //clear();
         shader.bind();
         shader.setUniform("textureSampler", 0);
         shader.setUniform("transformationMatrix", Utils.createTransform(entity));

@@ -20,9 +20,12 @@ public class RayVox implements IRayVox {
     private final WindowManager window;
 
     private Model model;
+    private Model model2;
     private Entity entity;
     private Camera camera;
     private Vector3f cameraInc;
+
+    private Entity entity2;
 
     public RayVox() {
         renderer = new RenderManager();
@@ -90,9 +93,13 @@ public class RayVox implements IRayVox {
         };
 
         model = loader.loadToVao(vertices, textureCoords, indices);
+        model2 = loader.loadToVao(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
+        model2.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
         entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1f);
-
+        entity2 = new Entity(model2, new Vector3f(5, 0, -5), new Vector3f(0, 0, 0), 1f);
+        System.out.println(entity.getModel().getVaoId());
+        System.out.println(entity2.getModel().getVaoId());
     }
 
     @Override
@@ -129,6 +136,8 @@ public class RayVox implements IRayVox {
 
     @Override
     public void render() {
+        renderer.clear();
+
         if(window.isResize()) {
             GL11.glViewport(0, 0, window.getWidth(), window.getHeight());
             window.setResize(true);
@@ -136,6 +145,7 @@ public class RayVox implements IRayVox {
 
         window.setClearColor(0, 1, 1, 1);
         renderer.render(entity, camera);
+        renderer.render(entity2, camera);
     }
 
     @Override
