@@ -17,9 +17,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ObjectLoader {
 
@@ -99,6 +97,9 @@ public class ObjectLoader {
         }
         for(int vboId : vbos) {
             GL15.glDeleteBuffers(vboId);
+        }
+        for(int texturesId : textures) {
+            GL11.glDeleteTextures(texturesId);
         }
     }
 

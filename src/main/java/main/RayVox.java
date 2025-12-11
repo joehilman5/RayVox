@@ -92,9 +92,6 @@ public class RayVox implements IRayVox {
         window.setClearColor(0, 1, 1, 1);
         renderer.render(bunny, camera, light);
 
-//        for(Entity newEntity: entityList) {
-//            renderer.render(newEntity, camera);
-//        }
     }
 
     @Override
