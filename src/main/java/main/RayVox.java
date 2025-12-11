@@ -1,5 +1,6 @@
 package main;
 
+import engine.Camera;
 import engine.ObjectLoader;
 import engine.RenderManager;
 import engine.WindowManager;
@@ -7,9 +8,12 @@ import entities.Entity;
 import entities.Model;
 import entities.Texture;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 public class RayVox implements IRayVox {
+
+    private static final float CAMERA_MOVE_SPEED = 0.05f;
 
     private final RenderManager renderer;
     private final ObjectLoader loader;
@@ -17,53 +21,110 @@ public class RayVox implements IRayVox {
 
     private Model model;
     private Entity entity;
+    private Camera camera;
+    private Vector3f cameraInc;
 
     public RayVox() {
         renderer = new RenderManager();
         window = Launcher.getWindow();
         loader = new ObjectLoader();
+        camera = new Camera();
+        cameraInc = new Vector3f(0, 0, 0);
     }
 
     @Override
     public void init() throws Exception {
         renderer.init();
 
-        float[] vertices = {
-                -0.5f, 0.5f, 0f,
-                -0.5f, -0.5f, 0f,
-                0.5f, -0.5f, 0f,
-                0.5f, 0.5f, 0f,
+        float[] vertices = new float[] {
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                -0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                -0.5f, 0.5f, -0.5f,
+                0.5f, 0.5f, -0.5f,
+                -0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, 0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
+                -0.5f, 0.5f, 0.5f,
+                -0.5f, -0.5f, 0.5f,
+                -0.5f, -0.5f, -0.5f,
+                0.5f, -0.5f, -0.5f,
+                -0.5f, -0.5f, 0.5f,
+                0.5f, -0.5f, 0.5f,
         };
-
-        float[] textureCoords = {
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0
+        float[] textureCoords = new float[]{
+                0.0f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.5f, 0.0f,
+                0.0f, 0.0f,
+                0.5f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.0f, 0.5f,
+                0.5f, 0.5f,
+                0.0f, 1.0f,
+                0.5f, 1.0f,
+                0.0f, 0.0f,
+                0.0f, 0.5f,
+                0.5f, 0.0f,
+                0.5f, 0.5f,
+                0.5f, 0.0f,
+                1.0f, 0.0f,
+                0.5f, 0.5f,
+                1.0f, 0.5f,
         };
-
-        int[] indices = {
-                0, 1, 3,
-                3, 1, 2
+        int[] indices = new int[]{
+                0, 1, 3, 3, 1, 2,
+                8, 10, 11, 9, 8, 11,
+                12, 13, 7, 5, 12, 7,
+                14, 15, 6, 4, 14, 6,
+                16, 18, 19, 17, 16, 19,
+                4, 6, 7, 5, 4, 7,
         };
 
         model = loader.loadToVao(vertices, textureCoords, indices);
         model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
-        entity = new Entity(model, new Vector3f(1, 0, 0), new Vector3f(0, 0, 0), 1f);
+        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0, 0, 0), 1f);
 
     }
 
     @Override
     public void input() {
+        cameraInc.set(0, 0, 0);
+        if(window.isKeyPressed(GLFW.GLFW_KEY_W)) {
+            cameraInc.z = -1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_S)) {
+            cameraInc.z = 1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_A)) {
+            cameraInc.x = -1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_D)) {
+            cameraInc.x = 1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
+            cameraInc.y = -1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_X)) {
+            cameraInc.y = 1;
+        }
+
 
     }
 
     @Override
     public void update() {
-        if(entity.getPosition().x < -1.5f) {
-            entity.getPosition().x = 1.5f;
-        }
-        entity.getPosition().x -= 0.01f;
+        camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
+
+        entity.incRotation(0.5f, 0.5f, 0);
     }
 
     @Override
@@ -73,8 +134,8 @@ public class RayVox implements IRayVox {
             window.setResize(true);
         }
 
-        window.setClearColor(1, 0, 0, 1);
-        renderer.render(entity);
+        window.setClearColor(0, 1, 1, 1);
+        renderer.render(entity, camera);
     }
 
     @Override
