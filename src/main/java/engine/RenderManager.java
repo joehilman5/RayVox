@@ -2,6 +2,7 @@ package engine;
 
 import entities.Entity;
 import entities.Model;
+import entities.Texture;
 import main.Launcher;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -29,10 +30,13 @@ public class RenderManager {
         shader.createUniform("viewMatrix");
         shader.createUniform("lightPosition");
         shader.createUniform("lightColor");
+        shader.createUniform("shineDamper");
+        shader.createUniform("reflectivity");
     }
 
     public void render(Entity entity, Camera camera, Light light) {
         Model model = entity.getModel();
+        Texture texture = model.getTexture();
         shader.bind();
         shader.setUniform("textureSampler", 0);
         shader.setUniform("transformationMatrix", Utils.createTransform(entity));
@@ -40,6 +44,8 @@ public class RenderManager {
         shader.setUniform("viewMatrix", Utils.createView(camera));
         shader.setUniform("lightPosition", light.getPosition());
         shader.setUniform("lightColor", light.getColor());
+        shader.setUniform("shineDamper", texture.getShineDamper());
+        shader.setUniform("reflectivity", texture.getReflectivity());
         GL30.glBindVertexArray(model.getVaoId());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);

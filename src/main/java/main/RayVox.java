@@ -43,6 +43,8 @@ public class RayVox implements IRayVox {
         light = new Light(new Vector3f(0, 2, 2), new Vector3f(1, 1, 1));
         bunnyModel = loader.loadObjModel("/models/bunny.obj");
         bunnyModel.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
+        bunnyModel.getTexture().setShineDamper(10);
+        bunnyModel.getTexture().setReflectivity(1f);
         bunny = new Entity(bunnyModel, new Vector3f(0, 0, -10), new Vector3f(0, 0, 0), 1f);
     }
 
