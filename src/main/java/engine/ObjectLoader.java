@@ -163,7 +163,6 @@ public class ObjectLoader {
         return loadToVao(verticesArr, texCoordsArr, normalArr, indicesArr);
     }
 
-    // helper methods
     private static Vector3i processFace(String token) {
         String[] parts = token.split("/");
         int pos = Integer.parseInt(parts[0]) - 1;
