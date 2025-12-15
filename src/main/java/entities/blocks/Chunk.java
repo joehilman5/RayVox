@@ -1,14 +1,36 @@
 package entities.blocks;
 
+import engine.ObjectLoader;
+import entities.Texture;
+
 public class Chunk {
 
     public static final int CHUNK_SIZE_X = 16;
     public static final int CHUNK_SIZE_Y = 256;
     public static final int CHUNK_SIZE_Z = 16;
 
+    private ObjectLoader loader = new ObjectLoader();
+
+    private int x;
+    private int z;
+
     private final Block[][][] blocks = new Block[CHUNK_SIZE_X][CHUNK_SIZE_Y][CHUNK_SIZE_Z];
 
     private boolean dirty = true;
+
+    public Chunk(int x, int z) {
+        this.x = x;
+        this.z = z;
+    }
+
+    public void setBlock(Block block) {
+        blocks[block.getX()][block.getY()][block.getZ()] = block;
+        dirty = true;
+    }
+
+    public Block getBlock(int x, int y, int z) {
+        return blocks[x][y][z];
+    }
 
     public boolean isDirty() {
         return dirty;
@@ -16,6 +38,21 @@ public class Chunk {
 
     public void setDirty(boolean value) {
         dirty = value;
+    }
+
+    public void checkNeighbors(int x, int y, int z) {
+        Block block = blocks[x][y][z];
+        if(block == null) return;
+
+        block.setFace(0, getBlock(x, y, z + 1) == null);
+        block.setFace(1, getBlock(x, y, z - 1) == null);
+        block.setFace(2, getBlock(x - 1, y, z) == null);
+        block.setFace(3, getBlock(x + 1, y, z) == null);
+        block.setFace(4, getBlock(x, y + 1, z) == null);
+        block.setFace(5, getBlock(x, y - 1, z) == null);
+
+        block.updateBlockModel();
+
     }
 
 }

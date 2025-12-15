@@ -80,5 +80,17 @@ public class Entity {
         return loader;
     }
 
+    public int getX() {
+        return (int) position.x;
+    }
+
+    public int getY() {
+        return (int) position.y;
+    }
+
+    public int getZ() {
+        return (int) position.z;
+    }
+
 
 }
