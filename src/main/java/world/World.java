@@ -2,6 +2,7 @@ package world;
 
 import entities.blocks.Block;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,10 @@ public class World {
 
     private String key(int x, int y, int z) {
         return x +"_" + y + "_" + z;
+    }
+
+    public Collection<Block> getAllBlocks() {
+        return blocks.values();
     }
 
 }

@@ -52,7 +52,7 @@ public class RayVox implements IRayVox {
         renderer.init();
         worldGen.initWorld();
 
-        light = new Light(new Vector3f(0, 10, 2), new Vector3f(1, 1, 1));
+        light = new Light(new Vector3f(25, 25,26), new Vector3f(1, 1, 1));
         bunnyModel = loader.loadObjModel("/models/bunny.obj");
         bunnyModel.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
         bunnyModel.getTexture().setShineDamper(10);
@@ -91,6 +91,10 @@ public class RayVox implements IRayVox {
         if(window.isKeyPressed(GLFW.GLFW_KEY_T)) {
             block.setFace(3, !block.getFace(3));
             block.updateBlockModel();
+        }
+
+        if(window.isKeyPressed(GLFW.GLFW_KEY_P)) {
+            System.out.println((int)camera.getPosition().x + " " + (int)camera.getPosition().y + " " + (int)camera.getPosition().z);
         }
 
     }

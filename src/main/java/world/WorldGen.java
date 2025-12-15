@@ -2,67 +2,64 @@ package world;
 
 import engine.ObjectLoader;
 import engine.RenderManager;
-import entities.blocks.AirBlock;
 import entities.blocks.Block;
 import entities.Model;
 import entities.Texture;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
 public class WorldGen {
 
-    private static final int X_ORIGIN = -50;
-    private static final int Z_ORIGIN = -50;
-
     private static final int WIDTH = 50;
     private static final int LENGTH = 50;
+    private static final int MAX_HEIGHT = 20;
 
-    private static RenderManager renderer;
-    private static ObjectLoader loader;
-    private static List<Block> blocks;
-
-    private World world;
+    private final RenderManager renderer;
+    private final ObjectLoader loader;
+    private final World world;
 
     public WorldGen(RenderManager renderer) {
         this.renderer = renderer;
-        loader = new ObjectLoader();
-        blocks = new ArrayList<Block>();
-        world = new World();
+        this.loader = new ObjectLoader();
+        this.world = new World();
     }
 
     public void initWorld() throws Exception {
+        // Load block texture and model
         Texture blockTexture = new Texture(loader.loadTexture("textures/dirt.png"));
         Model blockModel = Block.getBlockModel(blockTexture);
-        Model blockModel2 = Block.getBlockModel(blockTexture);
-//        for(int x = X_ORIGIN; x < WIDTH; x++) {
-//            for(int z = Z_ORIGIN; z < LENGTH; z++) {
-//                Block block = new Block(blockModel, x, 0, z);
-//                world.setBlock(x, 0, z, block);
-//            }
-//        }
-        Block block = new Block(blockModel);
-        Block block2 = new Block(blockModel2);
-        world.setBlock(0, 0, 0, block);
-        world.setBlock(1, 0, 0, block2);
-        Block airBlock = new AirBlock();
-        world.setBlock(2, 0, 0, airBlock);
 
+        // Generate mountain using a simple heightmap
+        Random rand = new Random();
+        int centerX = WIDTH / 2;
+        int centerZ = LENGTH / 2;
+        double maxDistance = Math.sqrt(centerX*centerX + centerZ*centerZ);
+
+        for (int x = 0; x < WIDTH; x++) {
+            for (int z = 0; z < LENGTH; z++) {
+                // Simple radial mountain: height decreases with distance from center
+                double dx = x - centerX;
+                double dz = z - centerZ;
+                double distance = Math.sqrt(dx*dx + dz*dz);
+                int height = (int)((1.0 - distance / maxDistance) * MAX_HEIGHT);
+                height = Math.max(height, 1); // minimum height 1
+
+                for (int y = 0; y < height; y++) {
+                    Block block = new Block(blockModel);
+                    world.setBlock(x, y, z, block);
+                }
+            }
+        }
     }
 
     public void renderWorld() {
-//        for(int x = X_ORIGIN; x < WIDTH; x++) {
-//            for(int z = Z_ORIGIN; z < LENGTH; z++) {
-//                Block block = world.getBlock(x, 0, z);
-//                renderer.processEntity(block);
-//            }
-//        }
-        Block block = world.getBlock(0, 0, 0);
-        Block block2 = world.getBlock(1, 0, 0);
-        Block airBlock = world.getBlock(2, 0, 0);
-        renderer.processEntity(block);
-        renderer.processEntity(block2);
-        renderer.processEntity(airBlock);
+        // Render all blocks in the world
+        for (Block block : world.getAllBlocks()) {
+            renderer.processEntity(block);
+        }
     }
 
+    public World getWorld() {
+        return world;
+    }
 }
