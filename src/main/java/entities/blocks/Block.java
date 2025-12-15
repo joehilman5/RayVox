@@ -1,6 +1,9 @@
-package entities;
+package entities.blocks;
 
+import entities.Entity;
+import entities.Model;
 import org.joml.Vector3f;
+import utils.VertexData;
 
 /*
 float[] vertices = {
@@ -83,6 +86,14 @@ public class Block extends Entity {
 
     public Block(Model model, Vector3f position, Vector3f rotation, float scale) {
         super(model, position, rotation, scale);
+    }
+
+    public static Model getBlockModel() {
+        float[] vertices = VertexData.vertices;
+        float[] normals = VertexData.normals;
+        float[] textureCoords = VertexData.textureCoords;
+        int[] indices = VertexData.indices;
+        return loader.loadToVao(vertices, textureCoords, normals, indices);
     }
 
 }

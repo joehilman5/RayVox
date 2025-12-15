@@ -2,7 +2,7 @@ package world;
 
 import engine.ObjectLoader;
 import engine.RenderManager;
-import entities.Block;
+import entities.blocks.Block;
 import entities.Model;
 import entities.Texture;
 

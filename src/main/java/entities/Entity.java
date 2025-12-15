@@ -10,7 +10,7 @@ public class Entity {
     private Vector3f rotation;
     private float scale;
 
-    private ObjectLoader loader;
+    protected static ObjectLoader loader;
 
     public Entity(Model model) {
         this.model = model;
@@ -79,4 +79,6 @@ public class Entity {
     public ObjectLoader getLoader() {
         return loader;
     }
+
+
 }

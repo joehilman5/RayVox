@@ -4,6 +4,8 @@ import engine.*;
 import entities.Entity;
 import entities.Model;
 import entities.Texture;
+import entities.blocks.Block;
+import entities.blocks.DirtBlock;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -31,6 +33,9 @@ public class RayVox implements IRayVox {
     private Model model;
     private List<Entity> entities;
 
+    private Model dirtModel;
+    private DirtBlock dirtBlock;
+
     public RayVox() {
         renderer = new RenderManager();
         window = Launcher.getWindow();
@@ -50,12 +55,14 @@ public class RayVox implements IRayVox {
         bunnyModel.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
         bunnyModel.getTexture().setShineDamper(10);
         bunnyModel.getTexture().setReflectivity(1f);
-        bunny = new Entity(bunnyModel, new Vector3f(0, 0, -10), new Vector3f(0, 0, 0), 1f);
+        bunny = new Entity(bunnyModel, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1f);
 
         model = loader.loadObjModel("/models/block_generic.obj");
         model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
         worldGen.initWorld();
 
+        dirtModel = Block.getBlockModel();
+        dirtBlock = new DirtBlock(0, 0, -10, dirtModel, "textures/dirt.png");
     }
 
     @Override
@@ -99,8 +106,10 @@ public class RayVox implements IRayVox {
             window.setResize(true);
         }
 
-        renderer.processEntity(bunny);
-        worldGen.renderWorld();
+        //renderer.processEntity(bunny);
+        //worldGen.renderWorld();
+
+        renderer.processEntity(dirtBlock);
 
         window.setClearColor(0, 1, 1, 1);
         renderer.render(camera, light);
