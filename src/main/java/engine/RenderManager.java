@@ -3,6 +3,7 @@ package engine;
 import entities.Entity;
 import entities.Model;
 import entities.Texture;
+import entities.blocks.Block;
 import main.Launcher;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -81,9 +82,14 @@ public class RenderManager {
         shader.setUniform("textureSampler", 0);
 
         for(Model model: entities.keySet()) {
+            if(model == null) continue;
             prepModel(model, camera, light);
             List<Entity> batch = entities.get(model);
             for(Entity entity: batch) {
+                if(entity instanceof Block) {
+                    Block block = (Block) entity;
+                    if(block.isAir()) continue;
+                }
                 prepareEntity(entity);
                 GL11.glDrawElements(GL11.GL_TRIANGLES,  model.getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
             }

@@ -4,9 +4,8 @@ import engine.*;
 import entities.Entity;
 import entities.Model;
 import entities.Texture;
+import entities.blocks.AirBlock;
 import entities.blocks.Block;
-import entities.blocks.Chunk;
-import entities.blocks.DirtBlock;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
@@ -22,7 +21,6 @@ public class RayVox implements IRayVox {
     private final RenderManager renderer;
     private final ObjectLoader loader;
     private final WindowManager window;
-    private final ChunkRenderer chunkRenderer;
 
     private Camera camera;
     private Vector3f cameraInc;
@@ -34,10 +32,11 @@ public class RayVox implements IRayVox {
     private Texture blockTexture;
     private Model blockModel;
     private Block block;
-    private Chunk chunk;
     private Model blockModel2;
     private Block block2;
     private WorldGen worldGen;
+
+    private Block airBlock;
 
     public RayVox() {
         renderer = new RenderManager();
@@ -45,14 +44,12 @@ public class RayVox implements IRayVox {
         loader = new ObjectLoader();
         camera = new Camera();
         cameraInc = new Vector3f(0, 0, 0);
-        chunkRenderer = new ChunkRenderer();
         worldGen = new WorldGen(renderer);
     }
 
     @Override
     public void init() throws Exception {
         renderer.init();
-        chunkRenderer.init();
         worldGen.initWorld();
 
         light = new Light(new Vector3f(0, 10, 2), new Vector3f(1, 1, 1));
@@ -67,9 +64,6 @@ public class RayVox implements IRayVox {
         blockModel2 = Block.getBlockModel(blockTexture);
         block = new Block(blockModel, 0, 0, 0);
         block2 = new Block(blockModel2, 1, 0, 0);
-        chunk = new Chunk(0, 0);
-        chunk.setBlock(block);
-        chunk.setBlock(block2);
 
     }
 
@@ -117,13 +111,10 @@ public class RayVox implements IRayVox {
             window.setResize(true);
         }
 
-        //renderer.processEntity(block);
-        //chunkRenderer.processChunk(chunk);
         worldGen.renderWorld();
 
         window.setClearColor(0, 1, 1, 1);
         renderer.render(camera, light);
-        chunkRenderer.render(camera, light);
 
     }
 

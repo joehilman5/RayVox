@@ -14,12 +14,9 @@ public class World {
 
         String key = key(x, y, z);
         blocks.put(key, block);
-
+        block.setPosition(x, y, z);
         block.setDirty(true);
 
-        //updateBlockFaces(block);
-
-        //updateNeighborFaces(x, y, z);
     }
 
     public Block getBlock(int x, int y, int z) {
