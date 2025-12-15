@@ -37,6 +37,7 @@ public class RayVox implements IRayVox {
     private Chunk chunk;
     private Model blockModel2;
     private Block block2;
+    private WorldGen worldGen;
 
     public RayVox() {
         renderer = new RenderManager();
@@ -45,14 +46,16 @@ public class RayVox implements IRayVox {
         camera = new Camera();
         cameraInc = new Vector3f(0, 0, 0);
         chunkRenderer = new ChunkRenderer();
+        worldGen = new WorldGen(renderer);
     }
 
     @Override
     public void init() throws Exception {
         renderer.init();
         chunkRenderer.init();
+        worldGen.initWorld();
 
-        light = new Light(new Vector3f(0, 2, 2), new Vector3f(1, 1, 1));
+        light = new Light(new Vector3f(0, 10, 2), new Vector3f(1, 1, 1));
         bunnyModel = loader.loadObjModel("/models/bunny.obj");
         bunnyModel.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
         bunnyModel.getTexture().setShineDamper(10);
@@ -114,8 +117,9 @@ public class RayVox implements IRayVox {
             window.setResize(true);
         }
 
-        renderer.processEntity(block);
-        chunkRenderer.processChunk(chunk);
+        //renderer.processEntity(block);
+        //chunkRenderer.processChunk(chunk);
+        worldGen.renderWorld();
 
         window.setClearColor(0, 1, 1, 1);
         renderer.render(camera, light);

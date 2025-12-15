@@ -11,36 +11,42 @@ import java.util.List;
 
 public class WorldGen {
 
-    private static final int X_ORIGIN = -100;
-    private static final int Z_ORIGIN = -100;
+    private static final int X_ORIGIN = -50;
+    private static final int Z_ORIGIN = -50;
 
-    private static final int WIDTH = 200;
-    private static final int LENGTH = 200;
+    private static final int WIDTH = 50;
+    private static final int LENGTH = 50;
 
     private static RenderManager renderer;
     private static ObjectLoader loader;
     private static List<Block> blocks;
 
+    private World world;
+
     public WorldGen(RenderManager renderer) {
         this.renderer = renderer;
         loader = new ObjectLoader();
         blocks = new ArrayList<Block>();
+        world = new World();
     }
 
     public void initWorld() throws Exception {
-        Model model = loader.loadObjModel("/models/block_generic.obj");
-        model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
-        for(int x = X_ORIGIN; x < X_ORIGIN + WIDTH; x++) {
-            for(int z = Z_ORIGIN; z < Z_ORIGIN + LENGTH; z++) {
-                Block block = new Block(model, x, 0, z);
-                blocks.add(block);
+        Texture blockTexture = new Texture(loader.loadTexture("textures/dirt.png"));
+        Model blockModel = Block.getBlockModel(blockTexture);
+        for(int x = X_ORIGIN; x < WIDTH; x++) {
+            for(int z = Z_ORIGIN; z < LENGTH; z++) {
+                Block block = new Block(blockModel, x, 0, z);
+                world.setBlock(x, 0, z, block);
             }
         }
     }
 
     public void renderWorld() {
-        for(Block block : blocks) {
-            renderer.processEntity(block);
+        for(int x = X_ORIGIN; x < WIDTH; x++) {
+            for(int z = Z_ORIGIN; z < LENGTH; z++) {
+                Block block = world.getBlock(x, 0, z);
+                renderer.processEntity(block);
+            }
         }
     }
 

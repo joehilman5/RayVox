@@ -1,7 +1,6 @@
 package entities.blocks;
 
 import engine.ObjectLoader;
-import entities.Texture;
 
 public class Chunk {
 
@@ -29,6 +28,11 @@ public class Chunk {
     }
 
     public Block getBlock(int x, int y, int z) {
+        if (x < 0 || x >= CHUNK_SIZE_X ||
+                y < 0 || y >= CHUNK_SIZE_Y ||
+                z < 0 || z >= CHUNK_SIZE_Z) {
+            return null;
+        }
         return blocks[x][y][z];
     }
 
@@ -40,8 +44,10 @@ public class Chunk {
         dirty = value;
     }
 
-    public void checkNeighbors(int x, int y, int z) {
-        Block block = blocks[x][y][z];
+    public void checkNeighbors(Block block) {
+        int x = block.getX();
+        int y = block.getY();
+        int z = block.getZ();
         if(block == null) return;
 
         block.setFace(0, getBlock(x, y, z + 1) == null);

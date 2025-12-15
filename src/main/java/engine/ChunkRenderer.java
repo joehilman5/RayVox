@@ -49,6 +49,7 @@ public class ChunkRenderer {
         shader.setUniform("textureSampler", 0);
 
         for(Chunk chunk : chunks) {
+
            for(int x = 0; x < Chunk.CHUNK_SIZE_X; x++) {
                for(int y = 0; y < Chunk.CHUNK_SIZE_Y; y++) {
                    for(int z = 0; z < Chunk.CHUNK_SIZE_Z; z++) {

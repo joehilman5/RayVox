@@ -12,6 +12,8 @@ public class Block extends Entity {
 
     private boolean[] faces = {true, true, true, true, true, true};
 
+    private boolean dirty = false;
+
     public Block(Model model, int x, int y, int z) {
         super(model, x, y, z);
     }
@@ -77,4 +79,11 @@ public class Block extends Entity {
         return faces[index];
     }
 
+    public boolean isDirty() {
+        return dirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
 }
