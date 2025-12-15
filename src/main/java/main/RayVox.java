@@ -25,16 +25,14 @@ public class RayVox implements IRayVox {
 
     private Camera camera;
     private Vector3f cameraInc;
+    private Light light;
 
     private Model bunnyModel;
     private Entity bunny;
-    private Light light;
 
-    private Model model;
-    private List<Entity> entities;
-
-    private Model dirtModel;
-    private DirtBlock dirtBlock;
+    private Texture blockTexture;
+    private Model blockModel;
+    private Block block;
 
     public RayVox() {
         renderer = new RenderManager();
@@ -42,7 +40,6 @@ public class RayVox implements IRayVox {
         loader = new ObjectLoader();
         camera = new Camera();
         cameraInc = new Vector3f(0, 0, 0);
-        entities = new ArrayList<>();
         worldGen = new WorldGen(renderer);
     }
 
@@ -57,12 +54,10 @@ public class RayVox implements IRayVox {
         bunnyModel.getTexture().setReflectivity(1f);
         bunny = new Entity(bunnyModel, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1f);
 
-        model = loader.loadObjModel("/models/block_generic.obj");
-        model.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
-        worldGen.initWorld();
+        blockTexture = new Texture(loader.loadTexture("/textures/dirt.png"));
+        blockModel = Block.getBlockModel(blockTexture);
+        block = new Block(blockModel, 0, 0, 0);
 
-        dirtModel = Block.getBlockModel();
-        dirtBlock = new DirtBlock(0, 0, -10, dirtModel, "textures/dirt.png");
     }
 
     @Override
@@ -86,7 +81,10 @@ public class RayVox implements IRayVox {
         if(window.isKeyPressed(GLFW.GLFW_KEY_X)) {
             cameraInc.y = 1;
         }
-
+        if(window.isKeyPressed(GLFW.GLFW_KEY_T)) {
+            block.setFace(3, !block.getFace(3));
+            block.updateBlockModel();
+        }
 
     }
 
@@ -106,10 +104,7 @@ public class RayVox implements IRayVox {
             window.setResize(true);
         }
 
-        //renderer.processEntity(bunny);
-        //worldGen.renderWorld();
-
-        renderer.processEntity(dirtBlock);
+        renderer.processEntity(block);
 
         window.setClearColor(0, 1, 1, 1);
         renderer.render(camera, light);

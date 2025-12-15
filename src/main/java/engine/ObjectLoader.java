@@ -103,6 +103,19 @@ public class ObjectLoader {
         }
     }
 
+    public void updateModel(Model model, float[] vertices, float[] uvs, float[] normals, int[] indices) {
+
+        GL30.glBindVertexArray(model.getVaoId());
+
+        storeIndices(indices);
+        storeData(0, 3, vertices);
+        storeData(1, 2,  uvs);
+        storeData(2, 3, normals);
+
+        model.setVertexCount(indices.length);
+        GL30.glBindVertexArray(0);
+    }
+
     public Model loadObjModel(String fileName) {
         List<String> lines = Utils.readAllLines(fileName);
 

@@ -2,98 +2,79 @@ package entities.blocks;
 
 import entities.Entity;
 import entities.Model;
-import org.joml.Vector3f;
+import entities.Texture;
 import utils.VertexData;
 
-/*
-float[] vertices = {
-        // Front face
-        -0.5f,  0.5f, 0.5f,
-        -0.5f, -0.5f, 0.5f,
-        0.5f, -0.5f, 0.5f,
-        0.5f,  0.5f, 0.5f,
-
-        // Back face
-        0.5f,  0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f,  0.5f, -0.5f,
-
-        // Left face
-        -0.5f,  0.5f, -0.5f,
-        -0.5f, -0.5f, -0.5f,
-        -0.5f, -0.5f,  0.5f,
-        -0.5f,  0.5f,  0.5f,
-
-        // Right face
-        0.5f,  0.5f,  0.5f,
-        0.5f, -0.5f,  0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f,  0.5f, -0.5f,
-
-        // Top face
-        -0.5f,  0.5f, -0.5f,
-        -0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f,  0.5f,
-        0.5f,  0.5f, -0.5f,
-
-        // Bottom face
-        -0.5f, -0.5f,  0.5f,
-        -0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f,  0.5f
-};
-
-float[] textureCoords = {
-        0,0, 0,1, 1,1, 1,0,   // front
-        0,0, 0,1, 1,1, 1,0,   // back
-        0,0, 0,1, 1,1, 1,0,   // left
-        0,0, 0,1, 1,1, 1,0,   // right
-        0,0, 0,1, 1,1, 1,0,   // top
-        0,0, 0,1, 1,1, 1,0    // bottom
-};
-
-
-float[] normals = {
-        0,0,1, 0,0,1, 0,0,1, 0,0,1,  // front
-        0,0,-1,0,0,-1,0,0,-1,0,0,-1, // back
-        -1,0,0,-1,0,0,-1,0,0,-1,0,0, // left
-        1,0,0, 1,0,0, 1,0,0, 1,0,0,  // right
-        0,1,0, 0,1,0, 0,1,0, 0,1,0,  // top
-        0,-1,0,0,-1,0,0,-1,0,0,-1,0 // bottom
-};
-
-
-int[] indices = {
-        0,1,2, 2,3,0,
-        4,5,6, 6,7,4,
-        8,9,10,10,11,8,
-        12,13,14,14,15,12,
-        16,17,18,18,19,16,
-        20,21,22,22,23,20
-};
- */
+import java.util.ArrayList;
+import java.util.List;
 
 public class Block extends Entity {
 
-    public Block(Model model) {
-        super(model);
-    }
+    private boolean[] faces = {true, true, true, true, true, true};
 
     public Block(Model model, int x, int y, int z) {
         super(model, x, y, z);
     }
 
-    public Block(Model model, Vector3f position, Vector3f rotation, float scale) {
-        super(model, position, rotation, scale);
-    }
-
-    public static Model getBlockModel() {
+    public static Model getBlockModel(Texture texture) {
         float[] vertices = VertexData.vertices;
         float[] normals = VertexData.normals;
         float[] textureCoords = VertexData.textureCoords;
         int[] indices = VertexData.indices;
-        return loader.loadToVao(vertices, textureCoords, normals, indices);
+        Model model = loader.loadToVao(vertices, textureCoords, normals, indices);
+        model.setTexture(texture);
+        return model;
+    }
+
+    public void updateBlockModel() {
+        float[] vertices = VertexData.vertices;
+        float[] normals = VertexData.normals;
+        float[] textureCoords = VertexData.textureCoords;
+        List<Integer> indicesList = new ArrayList<>();
+        if(getFace(0)) {
+            for(int i = 0; i < VertexData.frontFace.length; i++) {
+                indicesList.add(VertexData.frontFace[i]);
+            }
+        }
+        if(getFace(1)) {
+            for(int i = 0; i < VertexData.backFace.length; i++) {
+                indicesList.add(VertexData.backFace[i]);
+            }
+        }
+        if(getFace(2)) {
+            for(int i = 0; i < VertexData.leftFace.length; i++) {
+                indicesList.add(VertexData.leftFace[i]);
+            }
+        }
+        if(getFace(3)) {
+            for(int i = 0; i < VertexData.rightFace.length; i++) {
+                indicesList.add(VertexData.rightFace[i]);
+            }
+        }
+        if(getFace(4)) {
+            for(int i = 0; i < VertexData.topFace.length; i++) {
+                indicesList.add(VertexData.topFace[i]);
+            }
+        }
+        if(getFace(5)) {
+            for(int i = 0; i < VertexData.bottomFace.length; i++) {
+                indicesList.add(VertexData.bottomFace[i]);
+            }
+        }
+        int[] indices = new int[indicesList.size()];
+        for(int i = 0; i < indicesList.size(); i++) {
+            indices[i] = indicesList.get(i);
+        }
+
+        loader.updateModel(this.getModel(), vertices, textureCoords, normals, indices);
+    }
+
+    public void setFace(int index, boolean value) {
+        faces[index] = value;
+    }
+
+    public boolean getFace(int index) {
+        return faces[index];
     }
 
 }
