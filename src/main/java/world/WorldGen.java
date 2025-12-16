@@ -52,6 +52,18 @@ public class WorldGen {
         }
     }
 
+    public void initFlatworld() throws Exception {
+        Texture blockTexture = new Texture(loader.loadTexture("textures/dirt.png"));
+        Model blockModel = Block.getBlockModel(blockTexture);
+
+        for(int x = -50; x < 50; x++){
+            for(int z = -50; z < 50; z++){
+                Block block = new Block(blockModel);
+                world.setBlock(x, 0, z, block);
+            }
+        }
+    }
+
     public void renderWorld() {
         // Render all blocks in the world
         for (Block block : world.getAllBlocks()) {

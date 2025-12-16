@@ -3,6 +3,7 @@ package main;
 import engine.*;
 import entities.Entity;
 import entities.Model;
+import entities.Player;
 import entities.Texture;
 import entities.blocks.AirBlock;
 import entities.blocks.Block;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class RayVox implements IRayVox {
 
-    private static final float CAMERA_MOVE_SPEED = 0.05f;
+    private static final float CAMERA_MOVE_SPEED = 0.005f;
 
     private final RenderManager renderer;
     private final ObjectLoader loader;
@@ -36,7 +37,8 @@ public class RayVox implements IRayVox {
     private Block block2;
     private WorldGen worldGen;
 
-    private Block airBlock;
+    private Model playerModel;
+    private Player player;
 
     public RayVox() {
         renderer = new RenderManager();
@@ -50,14 +52,17 @@ public class RayVox implements IRayVox {
     @Override
     public void init() throws Exception {
         renderer.init();
-        worldGen.initWorld();
+        worldGen.initFlatworld();
 
-        light = new Light(new Vector3f(25, 25,26), new Vector3f(1, 1, 1));
+        light = new Light(new Vector3f(0, 10, 0), new Vector3f(1, 1, 1));
         bunnyModel = loader.loadObjModel("/models/bunny.obj");
         bunnyModel.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
+        playerModel = loader.loadObjModel("/models/player.obj");
+        playerModel.setTexture(new Texture(loader.loadTexture("/textures/dirt.png")));
         bunnyModel.getTexture().setShineDamper(10);
         bunnyModel.getTexture().setReflectivity(1f);
         bunny = new Entity(bunnyModel, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1f);
+        player = new Player(playerModel, new Vector3f(0, 1, -10), new Vector3f(0, 45, 0), 1f);
 
         blockTexture = new Texture(loader.loadTexture("/textures/dirt.png"));
         blockModel = Block.getBlockModel(blockTexture);
@@ -69,29 +74,28 @@ public class RayVox implements IRayVox {
 
     @Override
     public void input() {
-        cameraInc.set(0, 0, 0);
-        if(window.isKeyPressed(GLFW.GLFW_KEY_W)) {
-            cameraInc.z = -1;
-        }
-        if(window.isKeyPressed(GLFW.GLFW_KEY_S)) {
-            cameraInc.z = 1;
-        }
-        if(window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-            cameraInc.x = -1;
-        }
-        if(window.isKeyPressed(GLFW.GLFW_KEY_D)) {
-            cameraInc.x = 1;
-        }
-        if(window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
-            cameraInc.y = -1;
-        }
-        if(window.isKeyPressed(GLFW.GLFW_KEY_X)) {
-            cameraInc.y = 1;
-        }
-        if(window.isKeyPressed(GLFW.GLFW_KEY_T)) {
-            block.setFace(3, !block.getFace(3));
-            block.updateBlockModel();
-        }
+//        cameraInc.set(0, 0, 0);
+//        if(window.isKeyPressed(GLFW.GLFW_KEY_W)) {
+//            cameraInc.z = -1;
+//        }
+//        if(window.isKeyPressed(GLFW.GLFW_KEY_S)) {
+//            cameraInc.z = 1;
+//        }
+//        if(window.isKeyPressed(GLFW.GLFW_KEY_A)) {
+//            cameraInc.x = -1;
+//        }
+//        if(window.isKeyPressed(GLFW.GLFW_KEY_D)) {
+//            cameraInc.x = 1;
+//        }
+//        if(window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
+//            cameraInc.y = -1;
+//        }
+//        if(window.isKeyPressed(GLFW.GLFW_KEY_X)) {
+//            cameraInc.y = 1;
+//        }
+//        if(window.isKeyPressed(GLFW.GLFW_KEY_T)) {
+//
+//        }
 
         if(window.isKeyPressed(GLFW.GLFW_KEY_P)) {
             System.out.println((int)camera.getPosition().x + " " + (int)camera.getPosition().y + " " + (int)camera.getPosition().z);
@@ -102,6 +106,7 @@ public class RayVox implements IRayVox {
     @Override
     public void update() {
         camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
+        player.update();
 
         bunny.incRotation(0, 0.5f, 0);
     }
@@ -116,6 +121,7 @@ public class RayVox implements IRayVox {
         }
 
         worldGen.renderWorld();
+        renderer.processEntity(player);
 
         window.setClearColor(0, 1, 1, 1);
         renderer.render(camera, light);
