@@ -32,4 +32,8 @@ public class Model {
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
+
+    public void setVertexCount(int vertexCount) {
+        this.vertexCount = vertexCount;
+    }
 }

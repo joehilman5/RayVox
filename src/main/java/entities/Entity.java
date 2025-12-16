@@ -10,14 +10,13 @@ public class Entity {
     private Vector3f rotation;
     private float scale;
 
-    private ObjectLoader loader;
+    protected static ObjectLoader loader = new ObjectLoader();
 
     public Entity(Model model) {
         this.model = model;
         this.position = new Vector3f(0, 0, 0);
         this.rotation = new Vector3f(0, 0, 0);
         this.scale = 1;
-        this.loader = new ObjectLoader();
     }
 
     public Entity(Model model, int x, int y, int z) {
@@ -79,4 +78,18 @@ public class Entity {
     public ObjectLoader getLoader() {
         return loader;
     }
+
+    public int getX() {
+        return (int) position.x;
+    }
+
+    public int getY() {
+        return (int) position.y;
+    }
+
+    public int getZ() {
+        return (int) position.z;
+    }
+
+
 }

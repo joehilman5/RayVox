@@ -2,7 +2,6 @@ package utils;
 
 public class VertexData {
 
-    // ---------------- FRONT ----------------
     public static float[] frontVertices = {
             0, 1, 1,  // top-left
             0, 0, 1,  // bottom-left
@@ -72,5 +71,125 @@ public class VertexData {
     public static float[] bottomNormals = {0, -1, 0};
     public static float[] bottomTextureCoords = frontTextureCoords;
     public static int[] bottomIndices = {0, 1, 2, 2, 3, 0};
+
+    public static final float[] vertices = {
+            // FRONT (+Z)
+            0, 1, 1,
+            0, 0, 1,
+            1, 0, 1,
+            1, 1, 1,
+
+            // BACK (-Z)
+            1, 1, 0,
+            1, 0, 0,
+            0, 0, 0,
+            0, 1, 0,
+
+            // LEFT (-X)
+            0, 1, 0,
+            0, 0, 0,
+            0, 0, 1,
+            0, 1, 1,
+
+            // RIGHT (+X)
+            1, 1, 1,
+            1, 0, 1,
+            1, 0, 0,
+            1, 1, 0,
+
+            // TOP (+Y)
+            0, 1, 0,
+            0, 1, 1,
+            1, 1, 1,
+            1, 1, 0,
+
+            // BOTTOM (-Y)
+            0, 0, 1,
+            0, 0, 0,
+            1, 0, 0,
+            1, 0, 1
+    };
+
+    // UVs (same for every face)
+    public static final float[] uvs = {
+            0, 1,
+            0, 0,
+            1, 0,
+            1, 1,
+
+            0, 1,
+            0, 0,
+            1, 0,
+            1, 1,
+
+            0, 1,
+            0, 0,
+            1, 0,
+            1, 1,
+
+            0, 1,
+            0, 0,
+            1, 0,
+            1, 1,
+
+            0, 1,
+            0, 0,
+            1, 0,
+            1, 1,
+
+            0, 1,
+            0, 0,
+            1, 0,
+            1, 1
+    };
+
+    // Per-vertex normals
+    public static final float[] normals = {
+            // FRONT
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+            0, 0, 1,
+
+            // BACK
+            0, 0, -1,
+            0, 0, -1,
+            0, 0, -1,
+            0, 0, -1,
+
+            // LEFT
+            -1, 0, 0,
+            -1, 0, 0,
+            -1, 0, 0,
+            -1, 0, 0,
+
+            // RIGHT
+            1, 0, 0,
+            1, 0, 0,
+            1, 0, 0,
+            1, 0, 0,
+
+            // TOP
+            0, 1, 0,
+            0, 1, 0,
+            0, 1, 0,
+            0, 1, 0,
+
+            // BOTTOM
+            0, -1, 0,
+            0, -1, 0,
+            0, -1, 0,
+            0, -1, 0
+    };
+
+    // 36 indices (6 faces × 2 triangles × 3 vertices)
+    public static final int[] indices = {
+            0,  1,  2,  2,  3,  0,   // front
+            4,  5,  6,  6,  7,  4,   // back
+            8,  9, 10, 10, 11,  8,   // left
+            12, 13, 14, 14, 15, 12,   // right
+            16, 17, 18, 18, 19, 16,   // top
+            20, 21, 22, 22, 23, 20    // bottom
+    };
 
 }

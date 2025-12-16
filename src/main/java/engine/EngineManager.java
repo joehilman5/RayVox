@@ -13,6 +13,7 @@ public class EngineManager {
 
     private static int fps;
     private static float frametime = 1.0f / FRAMERATE;
+    private static float delta;
 
     private boolean isRunning;
 
@@ -54,7 +55,9 @@ public class EngineManager {
 
             input();
 
-            while(unproccessedTime > frametime) {
+            while(unproccessedTime >= frametime) {
+                delta = frametime;
+                update();
                 render = true;
                 unproccessedTime -= frametime;
 
@@ -71,7 +74,6 @@ public class EngineManager {
             }
 
             if(render) {
-                update();
                 render();
                 frames++;
             }
@@ -112,6 +114,10 @@ public class EngineManager {
 
     public static void setFps(int fps) {
         EngineManager.fps = fps;
+    }
+
+    public static float getDelta() {
+        return delta;
     }
 }
 
