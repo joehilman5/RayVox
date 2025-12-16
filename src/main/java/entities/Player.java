@@ -13,10 +13,10 @@ public class Player extends Entity {
     private WindowManager window;
 
     private static final float RUN_SPEED = 5.0f;
-    private static final float TURN_SPEED = 160f;
+    private static final float TURN_SPEED = 100f;
     private static final float GRAVITY  = -50;
     private static final float JUMP_POWER = 20;
-    private static final float MODEL_YAW_OFFSET = -90f;
+    private static final float MODEL_YAW_OFFSET = 0;
 
     private static final float HEIGHT = 1;
 
@@ -84,4 +84,15 @@ public class Player extends Entity {
         }
     }
 
+    public float getCurrentTurnSpeed() {
+        return currentTurnSpeed;
+    }
+
+    public float getUpwardsSpeed() {
+        return upwardsSpeed;
+    }
+
+    public float getCurrentSpeed() {
+        return currentSpeed;
+    }
 }

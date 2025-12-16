@@ -8,8 +8,8 @@ public class Camera {
     private Vector3f rotation;
 
     public Camera() {
-        position = new Vector3f(0, 5, 0);
-        rotation = new Vector3f(0, 0, 0);
+        position = new Vector3f(0, 5, -10);
+        rotation = new Vector3f(0, 180, 0);
     }
 
     public Camera(Vector3f position, Vector3f rotation) {
@@ -53,5 +53,27 @@ public class Camera {
 
     public Vector3f getRotation() {
         return rotation;
+    }
+
+    public int getX() {
+        return (int)  position.x;
+    }
+
+    public int getY() {
+        return (int)  position.y;
+    }
+
+    public int getZ() {
+        return (int)  position.z;
+    }
+
+    public int getRotX() {
+        return (int)  rotation.x;
+    }
+    public int getRotY() {
+        return (int)  rotation.y;
+    }
+    public int getRotZ() {
+        return (int)  rotation.z;
     }
 }

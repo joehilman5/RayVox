@@ -23,7 +23,7 @@ public class RayVox implements IRayVox {
     private final ObjectLoader loader;
     private final WindowManager window;
 
-    private Camera camera;
+    private FirstPersonCamera camera;
     private Vector3f cameraInc;
     private Light light;
 
@@ -44,9 +44,9 @@ public class RayVox implements IRayVox {
         renderer = new RenderManager();
         window = Launcher.getWindow();
         loader = new ObjectLoader();
-        camera = new Camera();
         cameraInc = new Vector3f(0, 0, 0);
         worldGen = new WorldGen(renderer);
+        //camera = new Camera();
     }
 
     @Override
@@ -62,7 +62,8 @@ public class RayVox implements IRayVox {
         bunnyModel.getTexture().setShineDamper(10);
         bunnyModel.getTexture().setReflectivity(1f);
         bunny = new Entity(bunnyModel, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1f);
-        player = new Player(playerModel, new Vector3f(0, 1, -10), new Vector3f(0, 45, 0), 1f);
+        player = new Player(playerModel, new Vector3f(0, 1, 0), new Vector3f(0, 0, 0), 1f);
+        camera = new FirstPersonCamera(player);
 
         blockTexture = new Texture(loader.loadTexture("/textures/dirt.png"));
         blockModel = Block.getBlockModel(blockTexture);
@@ -93,9 +94,10 @@ public class RayVox implements IRayVox {
 //        if(window.isKeyPressed(GLFW.GLFW_KEY_X)) {
 //            cameraInc.y = 1;
 //        }
-//        if(window.isKeyPressed(GLFW.GLFW_KEY_T)) {
-//
-//        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_T)) {
+            System.out.println("X: " + camera.getX() + " Y: " + camera.getY() + " Z: " + camera.getZ());
+            System.out.println("RotX " + camera.getRotX() + " RotY " + camera.getRotY() + " RotZ " + camera.getRotZ());
+        }
 
         if(window.isKeyPressed(GLFW.GLFW_KEY_P)) {
             System.out.println((int)camera.getPosition().x + " " + (int)camera.getPosition().y + " " + (int)camera.getPosition().z);
@@ -105,8 +107,9 @@ public class RayVox implements IRayVox {
 
     @Override
     public void update() {
-        camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
+        //camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
         player.update();
+        camera.update();
 
         bunny.incRotation(0, 0.5f, 0);
     }
