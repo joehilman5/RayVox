@@ -63,7 +63,7 @@ public class RayVox implements IRayVox {
         bunnyModel.getTexture().setShineDamper(10);
         bunnyModel.getTexture().setReflectivity(1f);
         bunny = new Entity(bunnyModel, new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), 1f);
-        player = new Player(playerModel, new Vector3f(0, 1, 0), new Vector3f(0, 0, 0), 1f);
+        player = new Player(playerModel, new Vector3f(0, 3, 0), new Vector3f(0, 0, 0), 1f, world);
         camera = new FirstPersonCamera(player);
 
         blockTexture = new Texture(loader.loadTexture("/textures/dirt.png"));

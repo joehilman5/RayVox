@@ -5,16 +5,16 @@ import engine.WindowManager;
 import entities.blocks.Block;
 import main.Launcher;
 import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import utils.AABB;
+import world.World;
 
-import java.awt.*;
-import java.nio.DoubleBuffer;
+import java.util.List;
 
 public class Player extends Entity {
 
     private WindowManager window;
+    private World world;
 
     private static final float WIDTH = 0.6f;
     private static final float HEIGHT = 1.8f;
@@ -22,11 +22,8 @@ public class Player extends Entity {
 
     private static final float RUN_SPEED = 5.0f;
     private static final float TURN_SPEED = 100f;
-    private static final float GRAVITY  = -50;
-    private static final float JUMP_POWER = 20;
-    private static final float MODEL_YAW_OFFSET = 0;
-
-    private static final float FLOOR_HEIGHT = 1;
+    private static final float GRAVITY = -50f;
+    private static final float JUMP_POWER = 12f;
 
     private float currentSpeed = 0;
     private float currentTurnSpeed = 0;
@@ -34,9 +31,10 @@ public class Player extends Entity {
 
     private boolean isInAir = false;
 
-    public Player(Model model, Vector3f position, Vector3f rotation, float scale) {
+    public Player(Model model, Vector3f position, Vector3f rotation, float scale, World world) {
         super(model, position, rotation, scale);
         this.window = Launcher.getWindow();
+        this.world = world;
     }
 
     public void update() {
@@ -44,80 +42,126 @@ public class Player extends Entity {
 
         float delta = EngineManager.getDelta();
 
+        // Rotate player
         super.incRotation(0, currentTurnSpeed * delta, 0);
 
-        float distance = currentSpeed * delta;
-        float yaw = super.getRotation().y + MODEL_YAW_OFFSET;
-        float yawRad = (float) Math.toRadians(yaw);
+        // Calculate movement in XZ plane
+        float yawRad = (float) Math.toRadians(super.getRotation().y);
+        float dx = (float) (Math.sin(yawRad) * currentSpeed * delta);
+        float dz = (float) (Math.cos(yawRad) * currentSpeed * delta);
 
-        float dx = (float) (distance * Math.sin(yawRad));
-        float dz = (float) (distance * Math.cos(yawRad));
-
-        super.incPosition(dx, 0, dz);
-
-        upwardsSpeed += GRAVITY * delta;
-        super.incPosition(0, upwardsSpeed * delta, 0);
-        if(super.getPosition().y < FLOOR_HEIGHT){
+        // Apply gravity only if in air
+        if (isInAir) {
+            upwardsSpeed += GRAVITY * delta;
+        } else {
             upwardsSpeed = 0;
-            super.getPosition().y = FLOOR_HEIGHT;
-            isInAir = false;
         }
+
+        float dy = upwardsSpeed * delta;
+
+        // Move with collision
+        move(dx, dy, dz);
     }
 
     private void jump() {
-        if(!isInAir) {
+        if (!isInAir) {
             isInAir = true;
-            this.upwardsSpeed = JUMP_POWER;
+            upwardsSpeed = JUMP_POWER;
         }
     }
 
     private void checkInputs() {
-        if(window.isKeyPressed(GLFW.GLFW_KEY_W)) {
-            this.currentSpeed = RUN_SPEED;
-        }else if(window.isKeyPressed(GLFW.GLFW_KEY_S)) {
-            this.currentSpeed = -RUN_SPEED;
-        }else {
-            this.currentSpeed = 0;
+        currentSpeed = 0;
+        currentTurnSpeed = 0;
+
+        if (window.isKeyPressed(GLFW.GLFW_KEY_W)) currentSpeed += RUN_SPEED;
+        if (window.isKeyPressed(GLFW.GLFW_KEY_S)) currentSpeed -= RUN_SPEED;
+        if (window.isKeyPressed(GLFW.GLFW_KEY_D)) currentTurnSpeed -= TURN_SPEED;
+        if (window.isKeyPressed(GLFW.GLFW_KEY_A)) currentTurnSpeed += TURN_SPEED;
+        if (window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) jump();
+    }
+
+    private void move(float dx, float dy, float dz) {
+        Vector3f pos = super.getPosition();
+
+        // ---- Y AXIS ----
+        if (dy != 0) {
+            float newY = pos.y + dy;
+            Block collidedBlock = getCollidingBlock(pos.x, newY, pos.z);
+            if (collidedBlock == null) {
+                pos.y = newY;
+                //isInAir = true;
+            } else {
+                if (dy < 0) {
+                    // Snap exactly to top of block
+                    pos.y = collidedBlock.getBoundingBox().maxY;
+                    isInAir = false;
+                } else if (dy > 0) {
+                    // Hit ceiling
+                    pos.y = collidedBlock.getBoundingBox().minY - HEIGHT;
+                }
+                upwardsSpeed = 0;
+            }
         }
 
-        if(window.isKeyPressed(GLFW.GLFW_KEY_D)) {
-            this.currentTurnSpeed = -TURN_SPEED;
-        }else if(window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-            this.currentTurnSpeed = TURN_SPEED;
-        }else {
-            this.currentTurnSpeed = 0;
+        // ---- X AXIS ----
+        if (dx != 0) {
+            Block collidedBlock = getCollidingBlock(pos.x + dx, pos.y, pos.z);
+            if (collidedBlock == null) pos.x += dx;
         }
-        if(window.isKeyPressed(GLFW.GLFW_KEY_SPACE)) {
-            jump();
+
+        // ---- Z AXIS ----
+        if (dz != 0) {
+            Block collidedBlock = getCollidingBlock(pos.x, pos.y, pos.z + dz);
+            if (collidedBlock == null) pos.z += dz;
         }
+
+        // ---- Ensure grounded state ----
+//        if (!isInAir) {
+//            if (!isOnGround(pos)) {
+//                isInAir = true;
+//            }
+//        } else {
+//            // Already in air, do nothing
+//        }
     }
 
-//    private boolean collides(float x, float y, float z) {
-//        AABB playerBox = new AABB(
-//                x - WIDTH / 2f,
-//                y,
-//                z - DEPTH / 2f,
-//                WIDTH,
-//                HEIGHT,
-//                DEPTH
-//        );
-//
-//        int bx = (int) Math.floor(x);
-//        int by = (int) Math.floor(y);
-//        int bz = (int) Math.floor(z);
-//
-//        List<Block> = world.getNearbyBocks.(bx, by, bz);
-//    }
+    private Block getCollidingBlock(float x, float y, float z) {
+        AABB playerBox = getPlayerAABB(x, y, z);
 
-    public float getCurrentTurnSpeed() {
-        return currentTurnSpeed;
+        int bx = (int) Math.floor(x);
+        int by = (int) Math.floor(y);
+        int bz = (int) Math.floor(z);
+
+        List<Block> nearby = world.getNearbyBlocks(bx, by, bz);
+        for (Block block : nearby) {
+            if (block == null || !block.isSolid()) continue;
+            if (playerBox.intersects(block.getBoundingBox())) return block;
+        }
+        return null;
     }
 
-    public float getUpwardsSpeed() {
-        return upwardsSpeed;
+    private AABB getPlayerAABB(float x, float y, float z) {
+        float halfW = WIDTH / 2f;
+        float halfD = DEPTH / 2f;
+
+        // Bottom of the player is y, top is y + HEIGHT
+        return new AABB(
+                x - halfW,
+                y,
+                z - halfD,
+                x + halfW,
+                y + HEIGHT,
+                z + halfD
+        );
     }
 
-    public float getCurrentSpeed() {
-        return currentSpeed;
+    private boolean isOnGround(Vector3f pos) {
+        // Slightly below the player to check for ground
+        return getCollidingBlock(pos.x, pos.y - 0.01f, pos.z) != null;
     }
+
+    public float getCurrentTurnSpeed() { return currentTurnSpeed; }
+    public float getUpwardsSpeed() { return upwardsSpeed; }
+    public float getCurrentSpeed() { return currentSpeed; }
 }

@@ -45,7 +45,7 @@ public class WorldGen {
                 height = Math.max(height, 1); // minimum height 1
 
                 for (int y = 0; y < height; y++) {
-                    Block block = new Block(blockModel);
+                    Block block = new Block(blockModel, x, y, z);
                     world.setBlock(x, y, z, block);
                 }
             }
@@ -58,7 +58,7 @@ public class WorldGen {
 
         for(int x = -50; x < 50; x++){
             for(int z = -50; z < 50; z++){
-                Block block = new Block(blockModel);
+                Block block = new Block(blockModel, x, 0, z);
                 world.setBlock(x, 0, z, block);
             }
         }

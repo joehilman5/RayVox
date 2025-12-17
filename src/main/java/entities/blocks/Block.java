@@ -24,7 +24,7 @@ public class Block extends Entity {
 
     public Block(Model model, int x, int y, int z) {
         super(model, x, y, z);
-        this.boundingBox = new AABB(getPosition(), 1, 1, 1);
+        this.boundingBox = new AABB(x, y, z, x+1, y+1, z+1);
     }
 
     public Block(Model model) {
