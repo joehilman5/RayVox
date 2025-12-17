@@ -2,15 +2,23 @@ package entities;
 
 import engine.EngineManager;
 import engine.WindowManager;
+import entities.blocks.Block;
 import main.Launcher;
 import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
+import utils.AABB;
 
 import java.awt.*;
+import java.nio.DoubleBuffer;
 
 public class Player extends Entity {
 
     private WindowManager window;
+
+    private static final float WIDTH = 0.6f;
+    private static final float HEIGHT = 1.8f;
+    private static final float DEPTH = 0.6f;
 
     private static final float RUN_SPEED = 5.0f;
     private static final float TURN_SPEED = 100f;
@@ -18,7 +26,7 @@ public class Player extends Entity {
     private static final float JUMP_POWER = 20;
     private static final float MODEL_YAW_OFFSET = 0;
 
-    private static final float HEIGHT = 1;
+    private static final float FLOOR_HEIGHT = 1;
 
     private float currentSpeed = 0;
     private float currentTurnSpeed = 0;
@@ -49,9 +57,9 @@ public class Player extends Entity {
 
         upwardsSpeed += GRAVITY * delta;
         super.incPosition(0, upwardsSpeed * delta, 0);
-        if(super.getPosition().y < HEIGHT){
+        if(super.getPosition().y < FLOOR_HEIGHT){
             upwardsSpeed = 0;
-            super.getPosition().y = HEIGHT;
+            super.getPosition().y = FLOOR_HEIGHT;
             isInAir = false;
         }
     }
@@ -83,6 +91,23 @@ public class Player extends Entity {
             jump();
         }
     }
+
+//    private boolean collides(float x, float y, float z) {
+//        AABB playerBox = new AABB(
+//                x - WIDTH / 2f,
+//                y,
+//                z - DEPTH / 2f,
+//                WIDTH,
+//                HEIGHT,
+//                DEPTH
+//        );
+//
+//        int bx = (int) Math.floor(x);
+//        int by = (int) Math.floor(y);
+//        int bz = (int) Math.floor(z);
+//
+//        List<Block> = world.getNearbyBocks.(bx, by, bz);
+//    }
 
     public float getCurrentTurnSpeed() {
         return currentTurnSpeed;

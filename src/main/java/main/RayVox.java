@@ -10,6 +10,7 @@ import entities.blocks.Block;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+import world.World;
 import world.WorldGen;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ public class RayVox implements IRayVox {
     private Block block;
     private Model blockModel2;
     private Block block2;
-    private WorldGen worldGen;
+    private World world;
 
     private Model playerModel;
     private Player player;
@@ -45,14 +46,14 @@ public class RayVox implements IRayVox {
         window = Launcher.getWindow();
         loader = new ObjectLoader();
         cameraInc = new Vector3f(0, 0, 0);
-        worldGen = new WorldGen(renderer);
+        world = new World(renderer);
         //camera = new Camera();
     }
 
     @Override
     public void init() throws Exception {
         renderer.init();
-        worldGen.initFlatworld();
+        world.init();
 
         light = new Light(new Vector3f(0, 10, 0), new Vector3f(1, 1, 1));
         bunnyModel = loader.loadObjModel("/models/bunny.obj");
@@ -100,7 +101,7 @@ public class RayVox implements IRayVox {
         }
 
         if(window.isKeyPressed(GLFW.GLFW_KEY_P)) {
-            System.out.println((int)camera.getPosition().x + " " + (int)camera.getPosition().y + " " + (int)camera.getPosition().z);
+            //System.out.println(worldGen.getWorld().getNearbyBlocks(player.getX(), player.getY(), player.getZ()));
         }
 
     }
@@ -123,7 +124,7 @@ public class RayVox implements IRayVox {
             window.setResize(true);
         }
 
-        worldGen.renderWorld();
+        world.renderWorld();
         renderer.processEntity(player);
 
         window.setClearColor(0, 1, 1, 1);

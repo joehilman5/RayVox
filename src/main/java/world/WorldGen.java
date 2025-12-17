@@ -18,10 +18,10 @@ public class WorldGen {
     private final ObjectLoader loader;
     private final World world;
 
-    public WorldGen(RenderManager renderer) {
+    public WorldGen(RenderManager renderer, World world) {
         this.renderer = renderer;
         this.loader = new ObjectLoader();
-        this.world = new World();
+        this.world = world;
     }
 
     public void initWorld() throws Exception {
