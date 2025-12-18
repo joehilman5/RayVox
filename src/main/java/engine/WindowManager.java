@@ -1,6 +1,7 @@
 package engine;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -155,8 +156,12 @@ public class WindowManager {
         GLFW.glfwDestroyWindow(window);
     }
 
-    public void setClearColor(float r, float g, float b, float a) {
-        GL11.glClearColor(r, g, b, a);
+//    public void setClearColor(float r, float g, float b, float a) {
+//        GL11.glClearColor(r, g, b, a);
+//    }
+
+    public void setClearColor(Vector4f color) {
+        GL11.glClearColor(color.x, color.y, color.z, color.w);
     }
 
     public boolean isKeyPressed(int keycode) {
@@ -236,4 +241,6 @@ public class WindowManager {
     public boolean isMousePressed(int button) {
         return mouseButtons[button];
     }
+
+
 }

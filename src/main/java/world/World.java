@@ -19,8 +19,8 @@ public class World {
     }
 
     public void init() throws Exception {
-        //worldGen.initFlatworld();
-        worldGen.initWorld();
+        worldGen.initFlatworld();
+        //worldGen.initWorld();
     }
 
     public void renderWorld() {

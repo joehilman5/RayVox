@@ -5,6 +5,7 @@ import entities.Model;
 import entities.Texture;
 import entities.blocks.Block;
 import main.Launcher;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;
@@ -41,6 +42,7 @@ public class RenderManager {
         shader.createUniform("lightColor");
         shader.createUniform("shineDamper");
         shader.createUniform("reflectivity");
+        shader.createUniform("skyColor");
     }
 
     /*
@@ -72,7 +74,7 @@ public class RenderManager {
 
      */
 
-    public void render(Camera camera, Light light) {
+    public void render(Camera camera, Light light, Vector3f skyColor) {
 
         shader.bind();
         shader.setUniform("projectionMatrix", window.updateProjectionMatrix());
@@ -80,10 +82,11 @@ public class RenderManager {
         shader.setUniform("lightColor", light.getColor());
         shader.setUniform("lightPosition", light.getPosition());
         shader.setUniform("textureSampler", 0);
+        shader.setUniform("skyColor", skyColor);
 
         for(Model model: entities.keySet()) {
             if(model == null) continue;
-            prepModel(model, camera, light);
+            prepModel(model);
             List<Entity> batch = entities.get(model);
             for(Entity entity: batch) {
                 if(entity instanceof Block) {
@@ -111,7 +114,7 @@ public class RenderManager {
         }
     }
 
-    private void prepModel(Model model, Camera camera, Light light) {
+    private void prepModel(Model model) {
         Texture texture = model.getTexture();
 
         shader.setUniform("shineDamper", texture.getShineDamper());

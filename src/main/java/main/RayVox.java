@@ -8,6 +8,7 @@ import entities.Texture;
 import entities.blocks.AirBlock;
 import entities.blocks.Block;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import world.World;
@@ -18,14 +19,14 @@ import java.util.List;
 
 public class RayVox implements IRayVox {
 
-    private static final float CAMERA_MOVE_SPEED = 0.005f;
+    private static final float MOVE_SPEED = 0.5f;
 
     private final RenderManager renderer;
     private final ObjectLoader loader;
     private final WindowManager window;
 
     private FirstPersonCamera camera;
-    private Vector3f cameraInc;
+    private Vector3f speedInc;
     private Light light;
 
     private Model bunnyModel;
@@ -40,14 +41,16 @@ public class RayVox implements IRayVox {
 
     private Model playerModel;
     private Player player;
+    private Vector4f skyColor;
 
     public RayVox() {
         renderer = new RenderManager();
         window = Launcher.getWindow();
         loader = new ObjectLoader();
-        cameraInc = new Vector3f(0, 0, 0);
+        speedInc = new Vector3f(0, 0, 0);
         world = new World(renderer);
         //camera = new Camera();
+        skyColor = new Vector4f(0, 1, 1, 1);
     }
 
     @Override
@@ -76,39 +79,39 @@ public class RayVox implements IRayVox {
 
     @Override
     public void input() {
-//        cameraInc.set(0, 0, 0);
-//        if(window.isKeyPressed(GLFW.GLFW_KEY_W)) {
-//            cameraInc.z = -1;
-//        }
-//        if(window.isKeyPressed(GLFW.GLFW_KEY_S)) {
-//            cameraInc.z = 1;
-//        }
-//        if(window.isKeyPressed(GLFW.GLFW_KEY_A)) {
-//            cameraInc.x = -1;
-//        }
-//        if(window.isKeyPressed(GLFW.GLFW_KEY_D)) {
-//            cameraInc.x = 1;
-//        }
-//        if(window.isKeyPressed(GLFW.GLFW_KEY_Z)) {
-//            cameraInc.y = -1;
-//        }
-//        if(window.isKeyPressed(GLFW.GLFW_KEY_X)) {
-//            cameraInc.y = 1;
-//        }
+        speedInc.set(0, 0, 0);
+        if(window.isKeyPressed(GLFW.GLFW_KEY_UP)) {
+            speedInc.y = 1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_DOWN)) {
+            speedInc.y = -1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_RIGHT)) {
+            speedInc.x = 1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_LEFT)) {
+            speedInc.x = -1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_N)) {
+            speedInc.z = -1;
+        }
+        if(window.isKeyPressed(GLFW.GLFW_KEY_M)) {
+            speedInc.z = 1;
+        }
         if(window.isKeyPressed(GLFW.GLFW_KEY_T)) {
             System.out.println("X: " + camera.getX() + " Y: " + camera.getY() + " Z: " + camera.getZ());
             System.out.println("RotX " + camera.getRotX() + " RotY " + camera.getRotY() + " RotZ " + camera.getRotZ());
         }
 
         if(window.isKeyPressed(GLFW.GLFW_KEY_P)) {
-            System.out.println("X: " + player.getX() + " Y: " + player.getY() + " Z: " + player.getZ());
+            System.out.println("X: " + light.getPosition().x + " Y: " + light.getPosition().y + " Z: " + light.getPosition().z);
         }
 
     }
 
     @Override
     public void update() {
-        //camera.movePosition(cameraInc.x * CAMERA_MOVE_SPEED, cameraInc.y * CAMERA_MOVE_SPEED, cameraInc.z * CAMERA_MOVE_SPEED);
+        light.movePos(speedInc.x * MOVE_SPEED, speedInc.y * MOVE_SPEED, speedInc.z * MOVE_SPEED);
         player.update();
         camera.update();
 
@@ -127,8 +130,8 @@ public class RayVox implements IRayVox {
         world.renderWorld();
         renderer.processEntity(player);
 
-        window.setClearColor(0, 1, 1, 1);
-        renderer.render(camera, light);
+        window.setClearColor(skyColor);
+        renderer.render(camera, light, new Vector3f(skyColor.x, skyColor.y, skyColor.z));
 
     }
 

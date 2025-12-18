@@ -19,4 +19,10 @@ public class Light {
     public Vector3f getPosition() {
         return position;
     }
+
+    public void movePos(float x, float y, float z) {
+        this.position.x = x;
+        this.position.y = y;
+        this.position.z = z;
+    }
 }

@@ -4,6 +4,7 @@ in vec2 passCoords;
 in vec3 surfaceNormal;
 in vec3 toLightVector;
 in vec3 toCameraVector;
+in float visibility;
 
 out vec4 fragColor;
 
@@ -11,6 +12,7 @@ uniform sampler2D textureSampler;
 uniform vec3 lightColor;
 uniform float shineDamper;
 uniform float reflectivity;
+uniform vec3 skyColor;
 
 void main() {
 
@@ -31,5 +33,6 @@ void main() {
     vec3 finalSpecular = dampedFactor * reflectivity * lightColor;
 
     fragColor = vec4(diffuse, 1.0) * texture(textureSampler, passCoords) + vec4(finalSpecular, 1.0);
+    fragColor = mix(vec4(skyColor, 1.0), fragColor, visibility);
 
 }
