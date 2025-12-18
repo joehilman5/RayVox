@@ -43,12 +43,21 @@ public class World {
 
     public List<Block> getNearbyBlocks(int x, int y, int z) {
         List<Block> batch = new ArrayList<>();
-        batch.add(getBlock(x+1, y, z));
-        batch.add(getBlock(x-1, y, z));
-        batch.add(getBlock(x, y+1, z));
-        batch.add(getBlock(x, y-1, z));
-        batch.add(getBlock(x, y, z+1));
-        batch.add(getBlock(x, y, z-1));
+
+        // Include center block
+        batch.add(getBlock(x, y, z));
+
+        // Include surrounding blocks
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 2; dy++) { // +2 for tall player
+                for (int dz = -1; dz <= 1; dz++) {
+                    if (dx == 0 && dy == 0 && dz == 0) continue; // center already added
+                    Block b = getBlock(x + dx, y + dy, z + dz);
+                    if (b != null) batch.add(b);
+                }
+            }
+        }
+
         return batch;
     }
 

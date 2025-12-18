@@ -101,7 +101,7 @@ public class RayVox implements IRayVox {
         }
 
         if(window.isKeyPressed(GLFW.GLFW_KEY_P)) {
-            //System.out.println(worldGen.getWorld().getNearbyBlocks(player.getX(), player.getY(), player.getZ()));
+            System.out.println("X: " + player.getX() + " Y: " + player.getY() + " Z: " + player.getZ());
         }
 
     }

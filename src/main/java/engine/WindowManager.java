@@ -24,6 +24,17 @@ public class WindowManager {
     private boolean vSync;
 
     private final Matrix4f projectionMatrix;
+    private double mouseX;
+    private double mouseY;
+    private double lastMouseX;
+    private double lastMouseY;
+    private double deltaX;
+    private double deltaY;
+
+    private boolean firstMouse = true;
+    private boolean mouseGrabbed = false;
+
+    private boolean[] mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
 
     public WindowManager(String title, int width, int height, boolean vSync) {
         this.title = title;
@@ -73,6 +84,29 @@ public class WindowManager {
             }
         });
 
+        GLFW.glfwSetCursorPosCallback(window, (window, xpos, ypos) -> {
+            if(firstMouse) {
+                lastMouseX = xpos;
+                lastMouseY = ypos;
+                firstMouse = false;
+            }
+
+            deltaX = xpos - lastMouseX;
+            deltaY = ypos - lastMouseY;
+
+            lastMouseX = xpos;
+            lastMouseY = ypos;
+
+            mouseX = xpos;
+            mouseY = ypos;
+        });
+
+        GLFW.glfwSetMouseButtonCallback(window, (window, button, action, mods) -> {
+            if(button >= 0 && button < mouseButtons.length) {
+                mouseButtons[button] = action == GLFW.GLFW_PRESS;
+            }
+        });
+
         if(maximised) {
             GLFW.glfwMaximizeWindow(window);
         }else {
@@ -100,8 +134,21 @@ public class WindowManager {
     }
 
     public void update() {
+        deltaX = 0;
+        deltaY = 0;
+
         GLFW.glfwSwapBuffers(window);
         GLFW.glfwPollEvents();
+    }
+
+    public void setMouseGrabbed(boolean grabbed) {
+        this.mouseGrabbed = grabbed;
+        GLFW.glfwSetInputMode(
+                window,
+                GLFW.GLFW_CURSOR,
+                grabbed ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL
+        );
+        firstMouse = true;
     }
 
     public void cleanUp() {
@@ -168,5 +215,25 @@ public class WindowManager {
     public Matrix4f updateProjectionMatrix(Matrix4f matrix, int width, int height) {
         float aspectRatio = (float) width / height;
         return matrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
+    }
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
+    }
+
+    public double getDeltaX() {
+        return deltaX;
+    }
+
+    public double getDeltaY() {
+        return deltaY;
+    }
+
+    public boolean isMousePressed(int button) {
+        return mouseButtons[button];
     }
 }
