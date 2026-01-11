@@ -35,6 +35,13 @@ public class ObjectLoader {
         return new Model(vaoId, indices.length);
     }
 
+    public Model loadToVao(float[] positions) {
+        int vaoId = createVao();
+        storeData(0, 2,  positions);
+        unbindVao();
+        return new Model(vaoId, positions.length / 2);
+    }
+
     private int createVao() {
         int vaoId = GL30.glGenVertexArrays();
         vaos.add(vaoId);

@@ -7,6 +7,9 @@ import entities.Player;
 import entities.Texture;
 import entities.blocks.AirBlock;
 import entities.blocks.Block;
+import guis.GuiRenderer;
+import guis.GuiTexture;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
@@ -43,6 +46,9 @@ public class RayVox implements IRayVox {
     private Player player;
     private Vector4f skyColor;
 
+    private GuiRenderer guiRenderer;
+    private List<GuiTexture> guis;
+
     public RayVox() {
         renderer = new RenderManager();
         window = Launcher.getWindow();
@@ -51,11 +57,14 @@ public class RayVox implements IRayVox {
         world = new World(renderer);
         //camera = new Camera();
         skyColor = new Vector4f(0, 1, 1, 1);
+        guis = new ArrayList<>();
     }
 
     @Override
     public void init() throws Exception {
         renderer.init();
+        guiRenderer = new GuiRenderer(loader);
+        guiRenderer.init();
         world.init();
 
         light = new Light(new Vector3f(0, 10, 0), new Vector3f(1, 1, 1));
@@ -74,6 +83,9 @@ public class RayVox implements IRayVox {
         blockModel2 = Block.getBlockModel(blockTexture);
         block = new Block(blockModel, 0, 0, 0);
         block2 = new Block(blockModel2, 1, 0, 0);
+
+        GuiTexture gui = new GuiTexture(loader.loadTexture("/textures/socuwan.png"), new Vector2f(0.5f, 0.5f), new Vector2f(0.25f, 0.25f));
+        guis.add(gui);
 
     }
 
@@ -133,11 +145,14 @@ public class RayVox implements IRayVox {
         window.setClearColor(skyColor);
         renderer.render(camera, light, new Vector3f(skyColor.x, skyColor.y, skyColor.z));
 
+        guiRenderer.render(guis);
+
     }
 
     @Override
     public void cleanUp() {
         renderer.cleanUp();
+        guiRenderer.cleanUp();
         loader.cleanUp();
     }
 }
