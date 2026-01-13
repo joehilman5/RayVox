@@ -3,6 +3,7 @@ package utils;
 import engine.Camera;
 import entities.Entity;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
@@ -60,6 +61,15 @@ public class Utils {
                 .rotateY((float) Math.toRadians(entity.getRotation().y))
                 .rotateZ((float) Math.toRadians(entity.getRotation().z))
                 .scale(entity.getScale());
+        return matrix;
+    }
+
+    public static Matrix4f createTransform(Vector2f translation, Vector2f scale) {
+        Matrix4f matrix = new Matrix4f();
+        matrix.identity();
+        matrix.translate(new Vector3f(translation.x, translation.y, 0))
+                .scale(new Vector3f(scale.x, scale.y, 0));
+
         return matrix;
     }
 
